@@ -1,4 +1,9 @@
-FROM python3.11-slim
+FROM python:3.11-slim
+
+# Install cron and other essentials
+RUN apt-get update && apt-get install -y cron python3 python3-pip && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    apt-get clean
 
 # Create app directory
 WORKDIR /app

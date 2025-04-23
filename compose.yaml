@@ -2,6 +2,4 @@ services:
   goodreads-scraper:
     build: .
     container_name: goodreads-scraper
-    volumes:
-      - ./output:/app  # Mount for output JSON
     restart: unless-stopped
