@@ -1,8 +1,10 @@
-import requests
+import json
+import time
 from bs4 import BeautifulSoup
 import ssl
 import book_details
 import isbn_scraper
+import timeit
 
 
 from urllib.request import urlopen
@@ -25,28 +27,49 @@ url = baseUrl+preUserUrl+userUrl+prePageUrl+pageNumber+postPageUrl
 
 i = 0
 books = []
+print("scraping GoodReads...")
+start_time = time.perf_counter()
+
 while True:
     page = urlopen(url)
     response = page.read().decode("utf-8")
     soup = BeautifulSoup(response, 'html.parser')
     scripts = soup.find_all('script')
-    print(scripts)
-    
+
     fields = soup.find_all('td', class_='field title')
-    if not fields: break
+    if not fields: break    
     for page in fields:
         i += 1
         x = page.find('div', 'value')
         title = x.a.text
+        title = ' '.join(title.strip().split())
         grUrl = baseUrl+x.a['href']
-        print("title: ", title)
-        print("url: ", grUrl)
         book = book_details.Book(title=title, url=grUrl)
         books.append(book)
     pageNumber = str((int(pageNumber)) + 1)
     url = baseUrl+preUserUrl+userUrl+prePageUrl+pageNumber+postPageUrl
 
+
+print(f"took: {time.perf_counter()-start_time} seconds")
+print()
+
+print("Finding ISBN numbers...")
+start_time = time.perf_counter()
+
 for book in books:
-    test = book.setISBN(isbn_scraper.get_isbn(book))
-    print("test: ",test)
-    
+    book.setISBN(isbn_scraper.get_isbn(book))
+
+print(f"took: {time.perf_counter()-start_time} seconds")
+print()
+
+print("Generating .JSON file...")
+start_time = time.perf_counter()
+
+data = [book.to_dict() for book in books]
+
+print(f"took: {time.perf_counter()-start_time} seconds")
+
+with open("booksJSON.json", "w") as booksJSON:
+    json.dump(data, booksJSON, indent=2, ensure_ascii=True)
+
+
