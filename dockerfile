@@ -1,0 +1,22 @@
+FROM python3.11-slim
+
+# Create app directory
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy code
+COPY . .
+
+# Add cron job
+COPY cronjob /etc/cron.d/scraper-cron
+RUN chmod 0644 /etc/cron.d/scraper-cron && \
+    crontab /etc/cron.d/scraper-cron
+
+# Create log file
+RUN touch /var/log/cron.log
+
+# Run cron in the foreground
+CMD cron && tail -f /var/log/cron.log
