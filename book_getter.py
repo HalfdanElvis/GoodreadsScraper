@@ -19,44 +19,78 @@ def search(url):
     response = page.read().decode("utf-8")
     soup = BeautifulSoup(response, 'html.parser')
 
+    # Try to get href from z-bookcard
     fields = soup.find_all('div', class_='book-item')
-    for page in fields:
-        x = page.find('z-bookcard')
-        href = x['href']
-        return baseUrl+href
+    for field in fields:
+        x = field.find('z-bookcard')
+        if x and x.has_attr('href'):
+            href = x['href']
+            print("Found href in z-bookcard:", href)
+            return baseUrl + href
+
+    # If not found, try alternative: a.title in book-info
+    fields = soup.find_all('div', class_='book-info')
+    for field in fields:
+        x = field.find('a', class_='title')
+        if x and x.has_attr('href'):
+            href = x['href']
+            print("Fallback href from book-info:", href)
+            return baseUrl + href
+
+    # If nothing found
+    print("No href found.")
+    return None
 
 def download(url):
     page = urlopen(url)
     response = page.read().decode("utf-8")
     soup = BeautifulSoup(response, 'html.parser')
+    href = None
 
+    # Try to get href from btn-default
     fields = soup.find_all('div', class_='btn-group')
     for field in fields:
         x = field.find('a', class_='btn btn-default addDownloadedBook')
         if x and x.has_attr('href'):
             href = x['href']
-            return baseUrl+href
+            return baseUrl + href
+    
+    # Try to get href from btn-primary
+    for field in fields:
+        x = field.find('a', class_='btn btn-primary addDownloadedBook')
+        if x and x.has_attr('href'):
+            href = x['href']
+            return baseUrl + href
+    
+    # If nothing found
+    print("No href found.")
+    return None
+    
 
 with open('booksJSON.json') as booksjson:
     books = json.load(booksjson)
 
 for book in books:
+    print(book["Title"], ":")
     if book["ISBN"]:
         url = baseUrl+preSearchUrl+book["ISBN"]+endSearchUrl
+        print(url)
         url = search(url)
-        print("ISBN: ", url)
-        downloadUrl = download(url)
-        print(downloadUrl)
-        print()
+        print("Found via ISBN")
+        
     elif book["Title"]:
         encoded_title = urllib.parse.quote_plus(book["Title"])
         tempUrl = baseUrl+preSearchUrl+stringSearchUrl+encoded_title
+        print(tempUrl)
         url = search(tempUrl)
-        print("Title: ", url)
-        downloadUrl = download(url)
-        print(downloadUrl)
-        print()
+        print("Found via Title")
     
+    if url:
+        downloadUrl = download(url)
+        print("download link: ", downloadUrl)
+    else:
+        print("Book couldn't be found")
+    print()
 
 
 
