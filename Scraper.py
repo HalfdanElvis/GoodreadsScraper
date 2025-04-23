@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import ssl
+import book_details
+import isbn_scraper
+
 
 from urllib.request import urlopen
 # Disable SSL verification
@@ -21,6 +24,7 @@ url = baseUrl+preUserUrl+userUrl+prePageUrl+pageNumber+postPageUrl
 
 
 i = 0
+books = []
 while True:
     page = urlopen(url)
     response = page.read().decode("utf-8")
@@ -36,9 +40,13 @@ while True:
         title = x.a.text
         grUrl = baseUrl+x.a['href']
         print("title: ", title)
-        print("TYPE: ", type(title))
-        print("url:", grUrl)
+        print("url: ", grUrl)
+        book = book_details.Book(title=title, url=grUrl)
+        books.append(book)
     pageNumber = str((int(pageNumber)) + 1)
     url = baseUrl+preUserUrl+userUrl+prePageUrl+pageNumber+postPageUrl
 
-getTitles(url)
+for book in books:
+    test = book.setISBN(isbn_scraper.get_isbn(book))
+    print("test: ",test)
+    
