@@ -34,7 +34,6 @@ while True:
     page = urlopen(url)
     response = page.read().decode("utf-8")
     soup = BeautifulSoup(response, 'html.parser')
-    scripts = soup.find_all('script')
 
     fields = soup.find_all('td', class_='field title')
     if not fields: break    
