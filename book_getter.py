@@ -85,22 +85,24 @@ for book in books:
         tempUrl = baseUrl+preSearchUrl+book["ISBN"]+endSearchUrl
         url = search(tempUrl)
 
+    #Search for Title AND Author
+
     elif book["Title"] or url == None:
         print("Searching via Title...")
         encoded_title = urllib.parse.quote_plus(book["Title"])
         tempUrl = baseUrl+preSearchUrl+stringSearchUrl+encoded_title
         url = search(tempUrl)
+
         if url == None:
-            # DOESNT WORK YET
             cleaned_title = re.sub(r'[^A-Za-z0-9 ]+', '', book["Title"])
             cleaned_title = re.sub(r'[ ]+', '%20', cleaned_title)
             tempUrl = baseUrl+preSearchUrl+cleaned_title+contentTypeBook
             url = search(tempUrl)
     
-    if url and download(url) == None:
-        cleaned_title = book["Title"].split('(')[0].strip()
-        tempUrl = url = baseUrl+preSearchUrl+cleaned_title+endSearchUrl
-        url = search(tempUrl)
+        if url and download(url) == None:
+            cleaned_title = book["Title"].split('(')[0].strip()
+            tempUrl = url = baseUrl+preSearchUrl+cleaned_title+endSearchUrl
+            url = search(tempUrl)
 
     if url:
         downloadUrl = download(url)
