@@ -69,11 +69,17 @@ def download(url):
     return None
     
 
+
+
+
+
+
 with open('booksJSON.json') as booksjson:
     books = json.load(booksjson)
 
 for book in books:
     print(book["Title"], ":")
+    
     if book["ISBN"]:
         print("Searching via ISBN...")
         url = baseUrl+preSearchUrl+book["ISBN"]+endSearchUrl
@@ -87,9 +93,8 @@ for book in books:
         if url == None:
             # DOESNT WORK YET
             cleaned_title = re.sub(r'[^A-Za-z0-9 ]+', '', book["Title"])
-            print(cleaned_title)
+            cleaned_title=(urllib.parse.quote_plus(cleaned_title))
             tempUrl = baseUrl+preSearchUrl+stringSearchUrl+cleaned_title+contentTypeBook
-            print(tempUrl)
             search(tempUrl)
     
     if url:
