@@ -93,8 +93,8 @@ for book in books:
         if url == None:
             # DOESNT WORK YET
             cleaned_title = re.sub(r'[^A-Za-z0-9 ]+', '', book["Title"])
-            cleaned_title=(urllib.parse.quote_plus(cleaned_title))
-            tempUrl = baseUrl+preSearchUrl+stringSearchUrl+cleaned_title+contentTypeBook
+            cleaned_title = re.sub(r'[ ]+', '%20', cleaned_title)
+            tempUrl = baseUrl+preSearchUrl+cleaned_title+contentTypeBook
             search(tempUrl)
     
     if url:
