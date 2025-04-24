@@ -95,7 +95,7 @@ for book in books:
             cleaned_title = re.sub(r'[^A-Za-z0-9 ]+', '', book["Title"])
             cleaned_title = re.sub(r'[ ]+', '%20', cleaned_title)
             tempUrl = baseUrl+preSearchUrl+cleaned_title+contentTypeBook
-            search(tempUrl)
+            url = search(tempUrl)
     
     if url:
         downloadUrl = download(url)
