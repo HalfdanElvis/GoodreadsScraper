@@ -82,10 +82,10 @@ for book in books:
     
     if book["ISBN"]:
         print("Searching via ISBN...")
-        url = baseUrl+preSearchUrl+book["ISBN"]+endSearchUrl
-        url = search(url)
+        tempUrl = baseUrl+preSearchUrl+book["ISBN"]+endSearchUrl
+        url = search(tempUrl)
 
-    elif book["Title"] or url==None:
+    elif book["Title"] or url == None:
         print("Searching via Title...")
         encoded_title = urllib.parse.quote_plus(book["Title"])
         tempUrl = baseUrl+preSearchUrl+stringSearchUrl+encoded_title
@@ -97,6 +97,11 @@ for book in books:
             tempUrl = baseUrl+preSearchUrl+cleaned_title+contentTypeBook
             url = search(tempUrl)
     
+    if url and download(url) == None:
+        cleaned_title = book["Title"].split('(')[0].strip()
+        tempUrl = url = baseUrl+preSearchUrl+cleaned_title+endSearchUrl
+        url = search(tempUrl)
+
     if url:
         downloadUrl = download(url)
         print("download link: ", downloadUrl)
