@@ -19,6 +19,7 @@ pageNumber = "1"
 postPageUrl = "&shelf=to-read"
 # URL of the webpage to scrape
 #global url = "https://www.goodreads.com/review/list/174226910-halfdan-elvis?page=1&shelf=to-read"
+# https://www.goodreads.com/review/list/112401943-s-ren-jacobsen?ref=nav_mybooks&shelf=to-read
 url = baseUrl+preUserUrl+userUrl+prePageUrl+pageNumber+postPageUrl
 
 
@@ -55,8 +56,11 @@ print()
 print("Finding ISBN numbers...")
 start_time = time.perf_counter()
 
-for book in books:
-    book.setISBN(isbn_scraper.get_isbn(book))
+book_count = len(books)
+for idx, book in enumerate(books):
+    print(f'{idx}/{book_count} Getting ISB for {book.title}')
+    book.setISBN(isbn_scraper.get_isbn_new(book))
+
 
 print(f"took: {time.perf_counter()-start_time} seconds")
 print()
