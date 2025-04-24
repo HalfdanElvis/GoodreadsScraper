@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 import ssl
 from urllib.request import urlopen
@@ -13,6 +14,7 @@ preSearchUrl = "/s/"
 searchUrl = ""
 endSearchUrl = "?"
 downloadUrl = ""
+contentTypeBook = "/?content_type=book"
 
 def search(url):
     page = urlopen(url)
@@ -73,17 +75,22 @@ with open('booksJSON.json') as booksjson:
 for book in books:
     print(book["Title"], ":")
     if book["ISBN"]:
+        print("Searching via ISBN...")
         url = baseUrl+preSearchUrl+book["ISBN"]+endSearchUrl
-        print(url)
         url = search(url)
-        print("Found via ISBN")
-        
-    elif book["Title"]:
+
+    elif book["Title"] or url==None:
+        print("Searching via Title...")
         encoded_title = urllib.parse.quote_plus(book["Title"])
         tempUrl = baseUrl+preSearchUrl+stringSearchUrl+encoded_title
-        print(tempUrl)
         url = search(tempUrl)
-        print("Found via Title")
+        if url == None:
+            # DOESNT WORK YET
+            cleaned_title = re.sub(r'[^A-Za-z0-9 ]+', '', book["Title"])
+            print(cleaned_title)
+            tempUrl = baseUrl+preSearchUrl+stringSearchUrl+cleaned_title+contentTypeBook
+            print(tempUrl)
+            search(tempUrl)
     
     if url:
         downloadUrl = download(url)
