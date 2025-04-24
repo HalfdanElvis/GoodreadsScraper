@@ -40,7 +40,7 @@ def search(url):
             return baseUrl + href
 
     # If nothing found
-    print("No href found.")
+    print("No book href found.")
     return None
 
 def download(url):
@@ -65,7 +65,7 @@ def download(url):
             return baseUrl + href
     
     # If nothing found
-    print("No href found.")
+    print("No download href found.")
     return None
     
 
