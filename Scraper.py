@@ -23,9 +23,6 @@ postPageUrl = "&shelf=to-read"
 url = baseUrl+preUserUrl+userUrl+prePageUrl+pageNumber+postPageUrl
 
 
-
-
-
 i = 0
 books = []
 print("scraping GoodReads...")
